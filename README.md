@@ -1,2 +1,2 @@
 # RAG
-Korean Language Support Financial Retriever Augmentation Generation model
+Korean Language Support RAG model specialized for the financial sector 
