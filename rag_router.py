@@ -35,7 +35,7 @@ def main(cli_argse):
         vector_collection[collection] = vectordb.get_collection(collection)
         vector_store[collection] = vectordb.get_vector_store(vector_collection[collection])
         vector_idx[collection] = vectordb.get_vector_index(vector_store[collection])
-        vector_retriever[collection] = vector_idx[collection].as_retriever()
+        vector_retriever[collection] = vector_idx[collection].as_retriever(similarity_top_k=5)
         vector_tool[collection] = RetrieverTool.from_defaults(retriever=vector_retriever[collection], \
                                     description=(f"{collection_map[collection]} 상품에 대해 물어볼 때 대답해줘"))
 
@@ -62,6 +62,11 @@ def main(cli_argse):
         # print(query_bundle)
         # start = time.time() 
         retrieved_nodes = router_retriever.retrieve_nodes(query_bundle)
+        print(len(retrieved_nodes))
+        print(router_retriever.get_node_info(retrieved_nodes[0]))
+        # print(router_retriever.get_node_info(retrieved_nodes[1]))
+        # print(router_retriever.get_node_info(retrieved_nodes[2]))
+        # print(router_retriever.get_node_info(retrieved_nodes[3]))
         # print(retrieved_nodes)
         # print(f'관련 노드 추출에 걸린 시간: {time.time() - start}')
         # print(retrieved_nodes)
@@ -71,7 +76,7 @@ def main(cli_argse):
 
         # Augment 
         context = f"'{node_info['name']}'은 {node_info['text']} 관련 상품입니다."
-        # print(f'관련 정보: {context}')
+        # print(f'관련 정보: {context}')+
         response_generator.set_prompt_template(query, context)
         response = response_generator.generate_response()
 
@@ -90,4 +95,4 @@ if __name__ == '__main__':
     cli_parser.add_argument("--config_path", type=str, default='/rag/config')
     cli_parser.add_argument("--db_type", type=int, default=0, help="0: local storage, 1: network (docker)")
     cli_argse = cli_parser.parse_args()
-    main(cli_argse)
+    main(cli_argse)       
